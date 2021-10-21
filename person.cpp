@@ -6,7 +6,9 @@ using std::cout;
 using std::endl;
 
 Person::Person(const char *name_, Person* father_, Person* mother_){
-    name = new char[strlen(name_)];
+    name = new char[strlen(name_)+1]; //ADDED PLUS 1 TO FIX INVALID READ SIZE because you always need a
+					//null terminator at the end and it is trying to read something
+					//thats not there
     strcpy(name, name_);
     father = father_;
     mother = mother_;
@@ -16,7 +18,8 @@ Person::Person(const char *name_, Person* father_, Person* mother_){
 }
 
 Person::~Person(){
-    delete children;
+    delete[] name; // ADDED because name is allocated as a pointer in person.h
+    delete[] children; // ADDED [] becuase children is an array of pointers to the kids
 }
 
 void Person::addChild(Person *newChild){
@@ -52,6 +55,7 @@ void Person::printLineage(char dir, int level){
             father->printLineage(dir, level + 1);
         }
     }
+    delete[] temp; // ADDED THIS because temp is allocated as a pointer
 }
 
 /* helper function to compute the lineage
@@ -66,7 +70,9 @@ char* Person::compute_relation(int level){
     for(int i = 2; i <= level; i++){
         char *temp2 = new char[strlen("great ") + strlen(temp) + 1];
         strcat(strcpy(temp2, "great "), temp);
+	delete[] temp; //ADDED THIS dont worry temp is being set to temp2 after
         temp = temp2;
+	//delete[] temp2; // WHY DONT WE DELETE TEMP2??
     }
     return temp;
 }
@@ -78,5 +84,6 @@ void expand(Person ***t, int *MAX){
   Person **temp = new Person*[2 * *MAX];
   memcpy(temp, *t, *MAX * sizeof(**t));
   *MAX *= 2;
+  delete [] *t; //ADDED THIS because partner said to
   *t = temp;
 }

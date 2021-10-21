@@ -12,7 +12,10 @@ PersonList::PersonList(){
 }
 
 PersonList::~PersonList(){
-    delete [] theList;
+    for(int i = 0; i < numPeople; i++){ //delete each pointer/memory in array theList
+	delete theList[i]; //delete the children first, then the parent
+    }
+    delete[] theList; //should there be a space? //indirectly lost date
 }
 
 void PersonList::addPerson(const char* child_name, const char* father_name, const char* mother_name){
